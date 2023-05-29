@@ -1,0 +1,488 @@
+Run with ./test.sh <sibling-core> | tee results/<machine-name>.txt
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 85
+model name	: Intel(R) Xeon(R) CPU @ 2.80GHz
+stepping	: 7
+microcode	: 0x1
+cpu MHz		: 2800.202
+cache size	: 33792 KB
+physical id	: 0
+siblings	: 2
+core id		: 0
+cpu cores	: 1
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves arat avx512_vnni md_clear arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass mds swapgs taa mmio_stale_data retbleed eibrs_pbrsb
+bogomips	: 5600.40
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 85
+model name	: Intel(R) Xeon(R) CPU @ 2.80GHz
+stepping	: 7
+microcode	: 0x1
+cpu MHz		: 2800.202
+cache size	: 33792 KB
+physical id	: 0
+siblings	: 2
+core id		: 0
+cpu cores	: 1
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves arat avx512_vnni md_clear arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass mds swapgs taa mmio_stale_data retbleed eibrs_pbrsb
+bogomips	: 5600.40
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=22.04
+DISTRIB_CODENAME=jammy
+DISTRIB_DESCRIPTION="Ubuntu 22.04.1 LTS"
+0-1
+gcc -o victim test.c -O0 -masm=intel -w 		-DVICTIM 
+gcc -o victim-PRCTL test.c -O0 -masm=intel -w 	-DVICTIM  -DPRCTL
+gcc -o victim-nospecctrl test.c -O0 -masm=intel -w 	-DVICTIM  -DMSR  -DMSR_VAL=0
+gcc -o victim-IBRS test.c -O0 -masm=intel -w 	-DVICTIM  -DMSR  -DMSR_VAL=1
+gcc -o victim-STIBP test.c -O0 -masm=intel -w 	-DVICTIM  -DMSR  -DMSR_VAL=2
+gcc -o victim-IBPB test.c -O0 -masm=intel -w 	-DVICTIM  -DMSR  -DMSR_VAL=0 -DIBPB
+gcc -o attacker test.c -O0 -masm=intel -w  
+Spectre and Meltdown mitigation detection tool v0.45
+
+Checking for vulnerabilities on current system
+Kernel is [35mLinux 5.15.0-1025-gcp #32-Ubuntu SMP Wed Nov 23 21:46:01 UTC 2022 x86_64[0m
+CPU is [35mIntel(R) Xeon(R) CPU @ 2.80GHz[0m
+
+[1;34mHardware check[0m
+* Hardware support (CPU microcode) for mitigation techniques
+  * Indirect Branch Restricted Speculation (IBRS)
+    * SPEC_CTRL MSR is available: [42m[30m YES [0m
+    * CPU indicates IBRS capability: [42m[30m YES [0m (SPEC_CTRL feature bit)
+  * Indirect Branch Prediction Barrier (IBPB)
+    * CPU indicates IBPB capability: [42m[30m YES [0m (SPEC_CTRL feature bit)
+  * Single Thread Indirect Branch Predictors (STIBP)
+    * SPEC_CTRL MSR is available: [42m[30m YES [0m
+    * CPU indicates STIBP capability: [42m[30m YES [0m (Intel STIBP feature bit)
+  * Speculative Store Bypass Disable (SSBD)
+    * CPU indicates SSBD capability: [42m[30m YES [0m (Intel SSBD)
+  * L1 data cache invalidation
+    * CPU indicates L1D flush capability: [43m[30m NO [0m
+  * Microarchitectural Data Sampling
+    * VERW instruction is available: [42m[30m YES [0m (MD_CLEAR feature bit)
+  * Indirect Branch Predictor Controls
+    * Indirect Predictor Disable feature is available: [43m[30m NO [0m
+    * Bottomless RSB Disable feature is available: [43m[30m NO [0m
+    * BHB-Focused Indirect Predictor Disable feature is available: [43m[30m NO [0m
+  * Enhanced IBRS (IBRS_ALL)
+    * CPU indicates ARCH_CAPABILITIES MSR availability: [42m[30m YES [0m
+    * ARCH_CAPABILITIES MSR advertises IBRS_ALL capability: [42m[30m YES [0m
+  * CPU explicitly indicates not being affected by Meltdown/L1TF (RDCL_NO): [42m[30m YES [0m
+  * CPU explicitly indicates not being affected by Variant 4 (SSB_NO): [43m[30m NO [0m
+  * CPU/Hypervisor indicates L1D flushing is not necessary on this system: [42m[30m YES [0m
+  * Hypervisor indicates host CPU might be affected by RSB underflow (RSBA): [44m[30m NO [0m
+  * CPU explicitly indicates not being affected by Microarchitectural Data Sampling (MDS_NO): [43m[30m NO [0m
+  * CPU explicitly indicates not being affected by TSX Asynchronous Abort (TAA_NO): [43m[30m NO [0m
+  * CPU explicitly indicates not being affected by iTLB Multihit (PSCHANGE_MSC_NO): [42m[30m YES [0m
+  * CPU explicitly indicates having MSR for TSX control (TSX_CTRL_MSR): [43m[30m NO [0m
+  * CPU supports Transactional Synchronization Extensions (TSX): [42m[30m YES [0m (RTM feature bit)
+  * CPU supports Software Guard Extensions (SGX): [42m[30m NO [0m
+  * CPU supports Special Register Buffer Data Sampling (SRBDS): [42m[30m NO [0m
+  * CPU microcode is known to cause stability problems: [44m[30m NO [0m (family 0x6 model 0x55 stepping 0x7 ucode 0x1 cpuid 0x50657)
+  * CPU microcode is the latest known available version: [41m[30m NO [0m (latest version is 0x500320a dated 2021/08/13 according to builtin firmwares DB v222+i20220208)
+* CPU vulnerability to the speculative execution attack variants
+  * Affected by CVE-2017-5753 (Spectre Variant 1, bounds check bypass): [43m[30m YES [0m
+  * Affected by CVE-2017-5715 (Spectre Variant 2, branch target injection): [43m[30m YES [0m
+  * Affected by CVE-2017-5754 (Variant 3, Meltdown, rogue data cache load): [42m[30m NO [0m
+  * Affected by CVE-2018-3640 (Variant 3a, rogue system register read): [43m[30m YES [0m
+  * Affected by CVE-2018-3639 (Variant 4, speculative store bypass): [43m[30m YES [0m
+  * Affected by CVE-2018-3615 (Foreshadow (SGX), L1 terminal fault): [42m[30m NO [0m
+  * Affected by CVE-2018-3620 (Foreshadow-NG (OS), L1 terminal fault): [43m[30m YES [0m
+  * Affected by CVE-2018-3646 (Foreshadow-NG (VMM), L1 terminal fault): [43m[30m YES [0m
+  * Affected by CVE-2018-12126 (Fallout, microarchitectural store buffer data sampling (MSBDS)): [43m[30m YES [0m
+  * Affected by CVE-2018-12130 (ZombieLoad, microarchitectural fill buffer data sampling (MFBDS)): [43m[30m YES [0m
+  * Affected by CVE-2018-12127 (RIDL, microarchitectural load port data sampling (MLPDS)): [43m[30m YES [0m
+  * Affected by CVE-2019-11091 (RIDL, microarchitectural data sampling uncacheable memory (MDSUM)): [43m[30m YES [0m
+  * Affected by CVE-2019-11135 (ZombieLoad V2, TSX Asynchronous Abort (TAA)): [43m[30m YES [0m
+  * Affected by CVE-2018-12207 (No eXcuses, iTLB Multihit, machine check exception on page size changes (MCEPSC)): [43m[30m YES [0m
+  * Affected by CVE-2020-0543 (Special Register Buffer Data Sampling (SRBDS)): [42m[30m NO [0m
+
+[1;34mCVE-2017-5753 aka 'Spectre Variant 1, bounds check bypass'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Mitigation: usercopy/swapgs barriers and __user pointer sanitization)
+* Kernel has array_index_mask_nospec: [42m[30m YES [0m (1 occurrence(s) found of x86 64 bits array_index_mask_nospec())
+* Kernel has the Red Hat/Ubuntu patch: [43m[30m NO [0m
+* Kernel has mask_nospec64 (arm64): [43m[30m NO [0m
+* Kernel has array_index_nospec (arm64): [43m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Mitigation: usercopy/swapgs barriers and __user pointer sanitization)
+
+[1;34mCVE-2017-5715 aka 'Spectre Variant 2, branch target injection'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Mitigation: Enhanced IBRS, IBPB: conditional, RSB filling, PBRSB-eIBRS: SW sequence)
+* Mitigation 1
+  * Kernel is compiled with IBRS support: [42m[30m YES [0m
+    * IBRS enabled and active: [42m[30m YES [0m (Enhanced flavor, performance impact will be greatly reduced)
+  * Kernel is compiled with IBPB support: [42m[30m YES [0m
+    * IBPB enabled and active: [42m[30m YES [0m
+* Mitigation 2
+  * Kernel has branch predictor hardening (arm): [43m[30m NO [0m
+  * Kernel compiled with retpoline option: [42m[30m YES [0m
+  * Kernel supports RSB filling: [42m[30m YES [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Enhanced IBRS + IBPB are mitigating the vulnerability)
+
+[1;34mCVE-2017-5754 aka 'Variant 3, Meltdown, rogue data cache load'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Not affected)
+* Kernel supports Page Table Isolation (PTI): [42m[30m YES [0m
+  * PTI enabled and active: [43m[30m NO [0m
+  * Reduced performance impact of PTI: [42m[30m YES [0m (CPU supports INVPCID, performance impact of PTI will be greatly reduced)
+* Running as a Xen PV DomU: [44m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (your CPU vendor reported your CPU model as not affected)
+
+[1;34mCVE-2018-3640 aka 'Variant 3a, rogue system register read'[0m
+* CPU microcode mitigates the vulnerability: [42m[30m YES [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (your CPU microcode mitigates the vulnerability)
+
+[1;34mCVE-2018-3639 aka 'Variant 4, speculative store bypass'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Mitigation: Speculative Store Bypass disabled via prctl and seccomp)
+* Kernel supports disabling speculative store bypass (SSB): [42m[30m YES [0m (found in /proc/self/status)
+* SSB mitigation is enabled and active: [42m[30m YES [0m (per-thread through prctl)
+* SSB mitigation currently active for selected processes: [42m[30m YES [0m (chronyd systemd-journald systemd-logind systemd-networkd systemd-resolved udevadm)
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Mitigation: Speculative Store Bypass disabled via prctl and seccomp)
+
+[1;34mCVE-2018-3615 aka 'Foreshadow (SGX), L1 terminal fault'[0m
+* CPU microcode mitigates the vulnerability: [44m[30m N/A [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (your CPU vendor reported your CPU model as not affected)
+
+[1;34mCVE-2018-3620 aka 'Foreshadow-NG (OS), L1 terminal fault'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Not affected)
+* Kernel supports PTE inversion: [42m[30m YES [0m (found in kernel image)
+* PTE inversion enabled and active: [43m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Not affected)
+
+[1;34mCVE-2018-3646 aka 'Foreshadow-NG (VMM), L1 terminal fault'[0m
+* Information from the /sys interface: Not affected
+* This system is a host running a hypervisor: [42m[30m NO [0m
+* Mitigation 1 (KVM)
+  * EPT is disabled: [44m[30m N/A [0m (the kvm_intel module is not loaded)
+* Mitigation 2
+  * L1D flush is supported by kernel: [42m[30m YES [0m (found flush_l1d in kernel image)
+  * L1D flush enabled: [43m[30m NO [0m
+  * Hardware-backed L1D flush supported: [44m[30m NO [0m (flush will be done in software, this is slower)
+  * Hyper-Threading (SMT) is enabled: [43m[30m YES [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (your kernel reported your CPU model as not affected)
+
+[1;34mCVE-2018-12126 aka 'Fallout, microarchitectural store buffer data sampling (MSBDS)'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Mitigation: Clear CPU buffers; SMT Host state unknown)
+* Kernel supports using MD_CLEAR mitigation: [42m[30m YES [0m (md_clear found in /proc/cpuinfo)
+* Kernel mitigation is enabled and active: [42m[30m YES [0m
+* SMT is either mitigated or disabled: [43m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Your microcode and kernel are both up to date for this mitigation, and mitigation is enabled)
+
+[1;34mCVE-2018-12130 aka 'ZombieLoad, microarchitectural fill buffer data sampling (MFBDS)'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Mitigation: Clear CPU buffers; SMT Host state unknown)
+* Kernel supports using MD_CLEAR mitigation: [42m[30m YES [0m (md_clear found in /proc/cpuinfo)
+* Kernel mitigation is enabled and active: [42m[30m YES [0m
+* SMT is either mitigated or disabled: [43m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Your microcode and kernel are both up to date for this mitigation, and mitigation is enabled)
+
+[1;34mCVE-2018-12127 aka 'RIDL, microarchitectural load port data sampling (MLPDS)'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Mitigation: Clear CPU buffers; SMT Host state unknown)
+* Kernel supports using MD_CLEAR mitigation: [42m[30m YES [0m (md_clear found in /proc/cpuinfo)
+* Kernel mitigation is enabled and active: [42m[30m YES [0m
+* SMT is either mitigated or disabled: [43m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Your microcode and kernel are both up to date for this mitigation, and mitigation is enabled)
+
+[1;34mCVE-2019-11091 aka 'RIDL, microarchitectural data sampling uncacheable memory (MDSUM)'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Mitigation: Clear CPU buffers; SMT Host state unknown)
+* Kernel supports using MD_CLEAR mitigation: [42m[30m YES [0m (md_clear found in /proc/cpuinfo)
+* Kernel mitigation is enabled and active: [42m[30m YES [0m
+* SMT is either mitigated or disabled: [43m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Your microcode and kernel are both up to date for this mitigation, and mitigation is enabled)
+
+[1;34mCVE-2019-11135 aka 'ZombieLoad V2, TSX Asynchronous Abort (TAA)'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Mitigation: Clear CPU buffers; SMT Host state unknown)
+* TAA mitigation is supported by kernel: [42m[30m YES [0m (found tsx_async_abort in kernel image)
+* TAA mitigation enabled and active: [42m[30m YES [0m (Mitigation: Clear CPU buffers; SMT Host state unknown)
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (Mitigation: Clear CPU buffers; SMT Host state unknown)
+
+[1;34mCVE-2018-12207 aka 'No eXcuses, iTLB Multihit, machine check exception on page size changes (MCEPSC)'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Not affected)
+* This system is a host running a hypervisor: [42m[30m NO [0m
+* iTLB Multihit mitigation is supported by kernel: [42m[30m YES [0m (found itlb_multihit in kernel image)
+* iTLB Multihit mitigation enabled and active: [43m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (this system is not running a hypervisor)
+
+[1;34mCVE-2020-0543 aka 'Special Register Buffer Data Sampling (SRBDS)'[0m
+* Mitigated according to the /sys interface: [42m[30m YES [0m (Not affected)
+* SRBDS mitigation control is supported by the kernel: [42m[30m YES [0m (found SRBDS implementation evidence in kernel image. Your kernel is up to date for SRBDS mitigation)
+* SRBDS mitigation control is enabled and active: [43m[30m NO [0m
+> [46m[30mSTATUS:[0m [42m[30m NOT VULNERABLE [0m (your CPU vendor reported your CPU model as not affected)
+
+> [46m[30mSUMMARY:[0m [42m[30mCVE-2017-5753:OK[0m [42m[30mCVE-2017-5715:OK[0m [42m[30mCVE-2017-5754:OK[0m [42m[30mCVE-2018-3640:OK[0m [42m[30mCVE-2018-3639:OK[0m [42m[30mCVE-2018-3615:OK[0m [42m[30mCVE-2018-3620:OK[0m [42m[30mCVE-2018-3646:OK[0m [42m[30mCVE-2018-12126:OK[0m [42m[30mCVE-2018-12130:OK[0m [42m[30mCVE-2018-12127:OK[0m [42m[30mCVE-2019-11091:OK[0m [42m[30mCVE-2019-11135:OK[0m [42m[30mCVE-2018-12207:OK[0m [42m[30mCVE-2020-0543:OK[0m
+
+Need more detailed information about mitigation options? Use --explain
+A false sense of security is worse than no security at all, see --disclaimer
+
+Starting attacker on core 0: 
+
+Testing victim on core 0: 
+Rate: 971/1000  MSR[72]=1
+Rate: 981/1000  MSR[72]=1
+Rate: 979/1000  MSR[72]=1
+Rate: 978/1000  MSR[72]=1
+Rate: 979/1000  MSR[72]=1
+Rate: 984/1000  MSR[72]=1
+Rate: 983/1000  MSR[72]=1
+Rate: 988/1000  MSR[72]=1
+Rate: 976/1000  MSR[72]=1
+Rate: 976/1000  MSR[72]=1
+Total misspredict rate: 9795/10000 (97.95 %)
+
+real	0m0.804s
+user	0m0.230s
+sys	0m0.049s
+
+Testing victim on core 1: 
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Total misspredict rate: 0/10000 (0.00 %)
+
+real	0m0.876s
+user	0m0.333s
+sys	0m0.018s
+--------------------------------------------
+
+Testing victim-nospecctrl on core 0: 
+current value msr[72]=1 on core 0
+writing msr[72]=0 on core 0 
+current value msr[72]=0 on core 0
+Rate: 982/1000  MSR[72]=1
+Rate: 957/1000  MSR[72]=0
+Rate: 955/1000  MSR[72]=0
+Rate: 959/1000  MSR[72]=0
+Rate: 962/1000  MSR[72]=0
+Rate: 945/1000  MSR[72]=0
+Rate: 944/1000  MSR[72]=0
+Rate: 952/1000  MSR[72]=0
+Rate: 949/1000  MSR[72]=0
+Rate: 944/1000  MSR[72]=0
+Total misspredict rate: 9549/10000 (95.49 %)
+current value msr[72]=0 on core 0
+
+real	0m0.823s
+user	0m0.279s
+sys	0m0.019s
+
+Testing victim-nospecctrl on core 1: 
+current value msr[72]=1 on core 1
+writing msr[72]=0 on core 1 
+current value msr[72]=0 on core 1
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Total misspredict rate: 0/10000 (0.00 %)
+current value msr[72]=0 on core 1
+
+real	0m0.893s
+user	0m0.314s
+sys	0m0.051s
+--------------------------------------------
+
+Testing victim-IBRS on core 0: 
+current value msr[72]=1 on core 0
+writing msr[72]=1 on core 0 
+current value msr[72]=1 on core 0
+Rate: 999/1000  MSR[72]=1
+Rate: 994/1000  MSR[72]=1
+Rate: 994/1000  MSR[72]=1
+Rate: 998/1000  MSR[72]=1
+Rate: 998/1000  MSR[72]=1
+Rate: 999/1000  MSR[72]=1
+Rate: 998/1000  MSR[72]=1
+Rate: 999/1000  MSR[72]=1
+Rate: 997/1000  MSR[72]=1
+Rate: 999/1000  MSR[72]=1
+Total misspredict rate: 9975/10000 (99.75 %)
+current value msr[72]=1 on core 0
+
+real	0m0.817s
+user	0m0.255s
+sys	0m0.032s
+
+Testing victim-IBRS on core 1: 
+current value msr[72]=1 on core 1
+writing msr[72]=1 on core 1 
+current value msr[72]=1 on core 1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Rate: 0/1000  MSR[72]=1
+Total misspredict rate: 0/10000 (0.00 %)
+current value msr[72]=1 on core 1
+
+real	0m0.878s
+user	0m0.318s
+sys	0m0.036s
+--------------------------------------------
+
+Testing victim-STIBP on core 0: 
+current value msr[72]=1 on core 0
+writing msr[72]=2 on core 0 
+current value msr[72]=2 on core 0
+Rate: 993/1000  MSR[72]=2
+Rate: 989/1000  MSR[72]=2
+Rate: 991/1000  MSR[72]=2
+Rate: 990/1000  MSR[72]=2
+Rate: 990/1000  MSR[72]=2
+Rate: 986/1000  MSR[72]=2
+Rate: 993/1000  MSR[72]=2
+Rate: 988/1000  MSR[72]=2
+Rate: 989/1000  MSR[72]=2
+Rate: 987/1000  MSR[72]=2
+Total misspredict rate: 9896/10000 (98.96 %)
+current value msr[72]=2 on core 0
+
+real	0m0.822s
+user	0m0.275s
+sys	0m0.018s
+
+Testing victim-STIBP on core 1: 
+current value msr[72]=1 on core 1
+writing msr[72]=2 on core 1 
+current value msr[72]=2 on core 1
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Rate: 0/1000  MSR[72]=2
+Total misspredict rate: 0/10000 (0.00 %)
+current value msr[72]=2 on core 1
+
+real	0m0.893s
+user	0m0.353s
+sys	0m0.012s
+--------------------------------------------
+
+Testing victim-IBPB on core 0: 
+current value msr[72]=2 on core 0
+writing msr[72]=0 on core 0 
+current value msr[72]=0 on core 0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Total misspredict rate: 0/10000 (0.00 %)
+current value msr[72]=0 on core 0
+
+real	0m0.872s
+user	0m0.301s
+sys	0m0.047s
+
+Testing victim-IBPB on core 1: 
+current value msr[72]=2 on core 1
+writing msr[72]=0 on core 1 
+current value msr[72]=0 on core 1
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Total misspredict rate: 0/10000 (0.00 %)
+current value msr[72]=0 on core 1
+
+real	0m0.968s
+user	0m0.368s
+sys	0m0.062s
+--------------------------------------------
+
+Testing victim-PRCTL on core 0: 
+PRCTL GET value 0x9
+Rate: 1/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Total misspredict rate: 1/10000 (0.01 %)
+
+real	0m0.837s
+user	0m0.273s
+sys	0m0.039s
+
+Testing victim-PRCTL on core 1: 
+PRCTL GET value 0x9
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Rate: 0/1000  MSR[72]=0
+Total misspredict rate: 0/10000 (0.00 %)
+
+real	0m0.893s
+user	0m0.359s
+sys	0m0.009s
+
+killing attacker
+rm attacker
+rm victim*

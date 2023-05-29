@@ -1,0 +1,53 @@
+---
+# Run with ansible-playbook -i cloud --extra-vars "host=baremetal" -u esoj  playbook.yaml -K, remember to change core on test.sh
+- name: Test playbook for hyperbleed
+  hosts: '{{ host }}'
+  tasks:
+  - name: Install git
+    ansible.builtin.package:
+      name: git
+      state: latest
+      update_cache: yes
+    become: true
+
+  - name: Install gcc
+    ansible.builtin.package:
+      name: gcc
+      state: latest
+      update_cache: yes
+    become: true
+
+  - name: Install Make
+    ansible.builtin.package:
+      name: make
+      state: latest
+      update_cache: yes
+    become: true
+
+  - name: Install rsync #necessary for debian machines
+    ansible.builtin.package:
+      name: rsync
+      state: latest
+      update_cache: yes
+    become: true
+
+  - name: Copy all files
+    ansible.posix.synchronize:
+      src: ./
+      dest: /tmp/hyperbleed
+  
+  - name: Enable MSR
+    ansible.builtin.command: modprobe msr
+    become: true
+
+  - name: Run tests
+    ansible.builtin.command: bash ./test.sh 1 
+    become: true
+    
+    args:
+      chdir: /tmp/hyperbleed
+    register: myoutput
+
+  - name: "save output to file"
+    local_action: copy content={{ myoutput.stdout }} dest=./results_v3/{{ansible_hostname}}-result.txt
+
