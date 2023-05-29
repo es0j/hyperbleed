@@ -1,7 +1,7 @@
 # Hyperbleed - Current state of spectre-BTI mitigations on cloud
 
 
-### Latest version of this paper/code available at [https://github.com/XYZ/](https://github.com/es0j/hyperbleed)
+### Latest version of this paper/code available at [https://github.com/es0j/hyperbleed](https://github.com/es0j/hyperbleed)
 
 
 ### This is a working document, please send us feedback if you think we got something wrong or if we missed a citation
