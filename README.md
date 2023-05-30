@@ -1108,7 +1108,7 @@ We would like to thank Alexandra Sandulescu for the excellent feedback, discussi
 * December 23 2022 - First version of this writeup 
 * December 26 2022 - Multiple tests performed on cloud providers
 * December 28 2022 - KVM behavior better understood, more cloud provider tests
-* December 31 2023 - Final write-up shared with vendors
+* December 31 2023 - December 31 2023 - Final write-up shared with AWS, Google, Oracle and Digital Ocean. No response until near the finish of 90 days embargo. 
 * February 20 2023 - CVE 2023-1998 spectre v2 SMT mitigations problem reported to kernel security team
 * March    02 2023 - CVE 2023-0045 disclosed on google security research
 * March    30 2023 - CVE 2023-1998 fixed
