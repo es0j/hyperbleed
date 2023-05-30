@@ -24,7 +24,7 @@ The Linux kernel allows userspace processes to enable mitigations by calling prc
 
 We have measured that on some instances of Google, AWS, Azure and Oracle, the spectre-BTI mitigation using prctl still leaves the victim exposed to attacks in some cases. In this research, we tested multiple scenarios in an attempt to enumerate the causes of failure for the mitigations.
 
-
+Note: The title *hyperbleed* is just a joke/meme/trolling and a way of internally tracking the bug.
 
 ## Current Hardware Mitigations (and their software interfaces on the Linux Kernel)
 
@@ -1108,7 +1108,7 @@ We would like to thank Alexandra Sandulescu for the excellent feedback, discussi
 * December 23 2022 - First version of this writeup 
 * December 26 2022 - Multiple tests performed on cloud providers
 * December 28 2022 - KVM behavior better understood, more cloud provider tests
-* December 30 2022 - Final write-up ready to share with vendors
+* December 31 2023 - Final write-up shared with vendors
 * February 20 2023 - CVE 2023-1998 spectre v2 SMT mitigations problem reported to kernel security team
 * March    02 2023 - CVE 2023-0045 disclosed on google security research
 * March    30 2023 - CVE 2023-1998 fixed
