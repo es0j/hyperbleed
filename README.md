@@ -1103,10 +1103,17 @@ We would like to thank Alexandra Sandulescu for the excellent feedback, discussi
 ## Timeline
 
 * December 01 2022 - Unexpected behavior on prctl detected
+* December 30 2022 - CVE 2023-0045 reported to kernel security team
+* January  01 2022 - CVE 2023-0045 fixed
 * December 23 2022 - First version of this writeup 
 * December 26 2022 - Multiple tests performed on cloud providers
 * December 28 2022 - KVM behavior better understood, more cloud provider tests
 * December 30 2022 - Final write-up ready to share with vendors
+* February 20 2023 - CVE 2023-1998 spectre v2 SMT mitigations problem reported to kernel security team
+* March    02 2023 - CVE 2023-0045 disclosed on google security research
+* March    30 2023 - CVE 2023-1998 fixed
+* April    12 2023 - CVE 2023-1998 disclosed on google security research
+* May      29 2023 - Hyperbleed report published
 
 
 
